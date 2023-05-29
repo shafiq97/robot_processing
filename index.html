@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bootstrap Card Example</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <style>
+      #webcamCanvas {
+        width: 100%;
+        height: auto;
+      }
+      .box {
+        height: 150px; /* adjust this as needed */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-8">
+          <div class="card">
+            <img
+              src="images/header.jpeg"
+              class="card-img-top"
+              alt="Your Image"
+            />
+            <div class="card-body">
+              <label for="source">Source</label>
+              <input
+                type="text"
+                class="form-control"
+                id="source"
+                placeholder=""
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <button type="button" class="btn btn-primary btn-block">
+                Help
+              </button>
+              <button type="button" class="btn btn-secondary btn-block">
+                Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+          <div class="card">
+            <div class="card-body">
+              <canvas id="webcamCanvas"></canvas>
+              <img
+                id="fallbackImage"
+                src="images/fallback.jpeg"
+                style="width: 100%; height: auto; display: none;"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="box bg-primary mb-3"></div>
+              <div class="box bg-secondary mb-3"></div>
+              <div class="box bg-success mb-3"></div>
+              <div class="box bg-warning mb-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <button type="button" class="btn btn-primary btn-block">
+                    Start
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-block">
+                    Stop
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="j1">J1</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j1"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j2">J2</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j2"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j3">J3</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j3"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j4">J4</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j4"
+                      placeholder=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      var video = document.createElement("video");
+      video.width = 640;
+      video.height = 360;
+      video.autoplay = true;
+
+      var canvas = document.getElementById("webcamCanvas");
+      var fallbackImage = document.getElementById("fallbackImage");
+      var context = canvas.getContext("2d");
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(function (stream) {
+            video.srcObject = stream;
+
+            video.onloadedmetadata = function () {
+              // Show the canvas and hide the fallback image
+              canvas.style.display = "block";
+              fallbackImage.style.display = "none";
+
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+
+              setInterval(function () {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+              }, 1000 / 30);
+            };
+          })
+          .catch(function (err0r) {
+            // If an error occurs (such as the user not allowing camera access),
+            // hide the canvas and show the fallback image
+            canvas.style.display = "none";
+            fallbackImage.style.display = "block";
+
+            console.log("Something went wrong!");
+          });
+      }
+    </script>
+  </body>
+</html>
