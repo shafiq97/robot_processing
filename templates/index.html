@@ -27,7 +27,7 @@
         <div class="col-8">
           <div class="card">
             <img
-              src="images/header.jpeg"
+              src="{{ url_for('static', filename='images/header.jpeg') }}"
               class="card-img-top"
               alt="Your Image"
             />
@@ -59,11 +59,11 @@
         <div class="col-8">
           <div class="card">
             <div class="card-body">
-              <canvas id="webcamCanvas"></canvas>
+              <img id="webcamCanvas" src="{{ url_for('video_feed') }}" />
               <img
                 id="fallbackImage"
                 src="images/fallback.jpeg"
-                style="width: 100%; height: auto; display: none;"
+                style="width: 100%; height: auto; display: none"
               />
             </div>
           </div>
