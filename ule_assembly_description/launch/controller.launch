@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch>
+
+<rosparam file="$(find ule_assembly_description)/launch/controller.yaml" command="load"/>
+
+<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" 	    	output="screen" ns="/ule_assembly_controller" args="--timeout 0 joint_state_controller Rev1_position_controller Rev2_position_controller Rev3_position_controller Rev4_position_controller "/>
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+  <remap from="/joint_states" to="/ule_assembly_controller/joint_states"/>
+</node>
+
+</launch>

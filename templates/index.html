@@ -1,142 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bootstrap Card Example</title>
     <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <style>
-        #webcamCanvas {
-            width: 100%;
-            height: auto;
-        }
-        .box {
-            height: 150px; /* adjust this as needed */
-        }
+      #webcamCanvas {
+        width: 100%;
+        height: auto;
+      }
+      .box {
+        height: 150px; /* adjust this as needed */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="row">
-            <div class="col-8">
-                <div class="card">
-                    <img src="{{ url_for('static', filename='images/header.jpeg') }}" class="card-img-top" alt="Your Image" />
-                    <div class="card-body">
-                        <label for="source">Source</label>
-                        <input type="text" class="form-control" id="source" placeholder="" />
-                    </div>
-                </div>
+      <div class="row">
+        <div class="col-8">
+          <div class="card">
+            <img
+              src="{{ url_for('static', filename='images/header.jpeg') }}"
+              class="card-img-top"
+              alt="Your Image"
+            />
+            <div class="card-body">
+              <label for="source">Source</label>
+              <input
+                type="text"
+                class="form-control"
+                id="source"
+                placeholder=""
+              />
             </div>
-            <div class="col-4">
-                <div class="card">
-                    <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-block">Help</button>
-                        <button type="button" class="btn btn-secondary btn-block">Settings</button>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="row">
-            <div class="col-8">
-                <div class="card">
-                    <div class="card-body">
-                        <img id="webcamCanvas" src="{{ url_for('video_feed') }}" />
-                        <img id="fallbackImage" src="images/fallback.jpeg" style="width: 100%; height: auto; display: none" />
-                    </div>
-                </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <button type="button" class="btn btn-primary btn-block">
+                Help
+              </button>
+              <button type="button" class="btn btn-secondary btn-block">
+                Settings
+              </button>
             </div>
-            <div class="col-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="box bg-primary mb-3"></div>
-                        <div class="box bg-secondary mb-3"></div>
-                        <div class="box bg-success mb-3"></div>
-                        <div class="box bg-warning mb-3"></div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="row">
-            <div class="col-8">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-primary btn-block">Start</button>
-                                <button type="button" class="btn btn-secondary btn-block">Stop</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="j1">J1</label>
-                                    <input type="text" class="form-control" id="j1" placeholder="" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="j2">J2</label>
-                                    <input type="text" class="form-control" id="j2" placeholder="" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="j3">J3</label>
-                                    <input type="text" class="form-control" id="j3" placeholder="" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="j4">J4</label>
-                                    <input type="text" class="form-control" id="j4" placeholder="" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+          <div class="card">
+            <div class="card-body">
+              <img
+                src="{{ url_for('video_feed')}}"
+                id="webcamVideo"
+                autoplay
+                playsinline
+                style="width: 100%; height: 100%; object-fit: cover;"
+              ></img>
+              <img
+                id="fallbackImage"
+                src="{{ url_for('static', filename='images/fallback.jpeg') }}"
+                style="width: 100%; height: auto; display: none"
+              />
             </div>
+          </div>
         </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <div id="shoulderChartContainer" class="box mb-3">
+                <canvas id="shoulderChart"></canvas>
+                <div id="shoulderValue" class="chart-value"></div>
+              </div>
+              <div id="elbowChartContainer" class="box mb-3">
+                <canvas id="elbowChart"></canvas>
+                <div id="elbowValue" class="chart-value"></div>
+              </div>
+              <div id="wristChartContainer" class="box mb-3">
+                <canvas id="wristChart"></canvas>
+                <div id="wristValue" class="chart-value"></div>
+              </div>
+              <div id="pinkyChartContainer" class="box mb-3">
+                <canvas id="pinkyChart"></canvas>
+                <div id="pinkyValue" class="chart-value"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <button type="button" class="btn btn-primary btn-block">
+                    Start
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-block">
+                    Stop
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="j1">J1</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j1"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j2">J2</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j2"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j3">J3</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j3"
+                      placeholder=""
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="j4">J4</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="j4"
+                      placeholder=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        var video = document.createElement("video");
-        video.width = 640;
-        video.height = 360;
-        video.autoplay = true;
+      var video = document.createElement("video");
+      video.width = 640;
+      video.height = 360;
+      video.autoplay = true;
 
-        var canvas = document.getElementById("webcamCanvas");
-        var fallbackImage = document.getElementById("fallbackImage");
-        var context = canvas.getContext("2d");
+      var video = document.getElementById("webcamVideo");
+      var fallbackImage = document.getElementById("fallbackImage");
 
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices
-                .getUserMedia({ video: true })
-                .then(function (stream) {
-                    video.srcObject = stream;
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(function (stream) {
+            video.srcObject = stream;
+            video.onloadedmetadata = function () {
+              video.style.display = "block";
+              fallbackImage.style.display = "none";
+            };
+          })
+          .catch(function (error) {
+            video.style.display = "none";
+            fallbackImage.style.display = "block";
+            console.log("Something went wrong:", error);
+          });
+      }
 
-                    video.onloadedmetadata = function () {
-                        // Show the canvas and hide the fallback image
-                        canvas.style.display = "block";
-                        fallbackImage.style.display = "none";
+      var chartOptions = {
+        responsive: true,
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: "Time",
+            },
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: "Value",
+            },
+          },
+        },
+      };
 
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
+      var shoulderData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Shoulder",
+            data: [],
+            backgroundColor: "rgba(0, 123, 255, 0.5)",
+            borderColor: "rgba(0, 123, 255, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
 
-                        setInterval(function () {
-                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        }, 1000 / 30);
-                    };
-                })
-                .catch(function (error) {
-                    // If an error occurs (such as the user not allowing camera access),
-                    // hide the canvas and show the fallback image
-                    canvas.style.display = "none";
-                    fallbackImage.style.display = "block";
+      var elbowData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Elbow",
+            data: [],
+            backgroundColor: "rgba(108, 117, 125, 0.5)",
+            borderColor: "rgba(108, 117, 125, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
 
-                    console.log("Something went wrong:", error);
-                });
-        }
+      var wristData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Wrist",
+            data: [],
+            backgroundColor: "rgba(40, 167, 69, 0.5)",
+            borderColor: "rgba(40, 167, 69, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var pinkyData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Pinky",
+            data: [],
+            backgroundColor: "rgba(255, 193, 7, 0.5)",
+            borderColor: "rgba(255, 193, 7, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      var shoulderChart = new Chart(document.getElementById("shoulderChart"), {
+        type: "line",
+        data: shoulderData,
+        options: chartOptions,
+      });
+
+      var elbowChart = new Chart(document.getElementById("elbowChart"), {
+        type: "line",
+        data: elbowData,
+        options: chartOptions,
+      });
+
+      var wristChart = new Chart(document.getElementById("wristChart"), {
+        type: "line",
+        data: wristData,
+        options: chartOptions,
+      });
+
+      var pinkyChart = new Chart(document.getElementById("pinkyChart"), {
+        type: "line",
+        data: pinkyData,
+        options: chartOptions,
+      });
+
+      function updateCharts() {
+        fetch("/shoulder_value")
+          .then((response) => response.json())
+          .then((data) => {
+            var time = new Date().toLocaleTimeString();
+            shoulderData.labels.push(time);
+            shoulderData.datasets[0].data.push(data.value);
+            shoulderChart.update();
+
+            document.getElementById("shoulderValue").innerHTML =
+              "Shoulder: " + data.value;
+          });
+
+        fetch("/elbow_value")
+          .then((response) => response.json())
+          .then((data) => {
+            var time = new Date().toLocaleTimeString();
+            elbowData.labels.push(time);
+            elbowData.datasets[0].data.push(data.value);
+            elbowChart.update();
+
+            document.getElementById("elbowValue").innerHTML =
+              "Elbow: " + data.value;
+          });
+
+        fetch("/wrist_value")
+          .then((response) => response.json())
+          .then((data) => {
+            var time = new Date().toLocaleTimeString();
+            wristData.labels.push(time);
+            wristData.datasets[0].data.push(data.value);
+            wristChart.update();
+
+            document.getElementById("wristValue").innerHTML =
+              "Wrist: " + data.value;
+          });
+
+        fetch("/pinky_value")
+          .then((response) => response.json())
+          .then((data) => {
+            var time = new Date().toLocaleTimeString();
+            pinkyData.labels.push(time);
+            pinkyData.datasets[0].data.push(data.value);
+            pinkyChart.update();
+
+            document.getElementById("pinkyValue").innerHTML =
+              "Pinky: " + data.value;
+          });
+      }
+
+      setInterval(updateCharts, 1000);
     </script>
-</body>
+  </body>
 </html>

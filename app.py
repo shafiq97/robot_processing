@@ -2,13 +2,22 @@ from flask import Flask, render_template, Response
 import cv2
 import mediapipe as mp
 import numpy as np
-import rospy
-from std_msgs.msg import Float64
+# import rospy
+# from std_msgs.msg import Float64
 
 app = Flask(__name__)
 cap = cv2.VideoCapture(0)
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
+
+latest_values = {
+    'shoulder': 0,
+    'elbow': 0,
+    'wrist': 0,
+    'hip': 0,
+    'pinky': 0
+}
+
 
 def calculate_angle(a, b, c):
     a = np.array(a)
@@ -22,12 +31,31 @@ def calculate_angle(a, b, c):
 
     return angle
 
+@app.route('/shoulder_value')
+def shoulder_value():
+    return {'value': latest_values['shoulder']}
+
+@app.route('/elbow_value')
+def elbow_value():
+    return {'value': latest_values['elbow']}
+
+@app.route('/wrist_value')
+def wrist_value():
+    return {'value': latest_values['wrist']}
+
+@app.route('/pinky_value')
+def pinky_value():
+    print(latest_values['pinky'])
+    return {'value': latest_values['pinky']}
+
+
+
 def publish_angles(shoulder, elbow, wrist, hip, pinky):
-    pub1 = rospy.Publisher('/ule_assembly_controller/Rev1_position_controller/command', Float64, queue_size=10)
-    pub2 = rospy.Publisher('/ule_assembly_controller/Rev3_position_controller/command', Float64, queue_size=10)
-    pub3 = rospy.Publisher('/ule_assembly_controller/Rev4_position_controller/command', Float64, queue_size=10)
-    rospy.init_node('ule_talker', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    # pub1 = rospy.Publisher('/ule_assembly_controller/Rev1_position_controller/command', Float64, queue_size=10)
+    # pub2 = rospy.Publisher('/ule_assembly_controller/Rev3_position_controller/command', Float64, queue_size=10)
+    # pub3 = rospy.Publisher('/ule_assembly_controller/Rev4_position_controller/command', Float64, queue_size=10)
+    # rospy.init_node('ule_talker', anonymous=True)
+    # rate = rospy.Rate(10) # 10hz
     pi = 22 / 7
 
     angle1 = 0  # Default value
@@ -39,31 +67,42 @@ def publish_angles(shoulder, elbow, wrist, hip, pinky):
         angle2 = calculate_angle(elbow, shoulder, hip)
         angle3 = 180 - calculate_angle(pinky, wrist, elbow)
 
+        latest_values['shoulder'] = angle1
+        latest_values['elbow'] = angle2
+        latest_values['wrist'] = angle3
+
         position1 = -(angle2 - 20) * (pi / 180)
         position2 = (angle1 - 90) * (pi / 180)
         position3 = angle3 * (pi / 180)
 
-        rospy.loginfo(position1)
-        rospy.loginfo(angle2)
-        pub1.publish(position1)
+        return {
+            'angle1': angle1,
+            'angle2': angle2,
+            'angle3': angle3,
+        }
 
-        rospy.loginfo(position2)
-        rospy.loginfo(angle1)
-        pub2.publish(position2)
+        # rospy.loginfo(position1)
+        # rospy.loginfo(angle2)
+        # pub1.publish(position1)
 
-        rospy.loginfo(position3)
-        rospy.loginfo(angle3)
-        pub3.publish(position3)
+        # rospy.loginfo(position2)
+        # rospy.loginfo(angle1)
+        # pub2.publish(position2)
 
-        rate.sleep()
+        # rospy.loginfo(position3)
+        # rospy.loginfo(angle3)
+        # pub3.publish(position3)
+
+        # rate.sleep()
     except:
-        pass
+        return {}
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 def generate_frames():
+    print("got here")
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
             ret, frame = cap.read()

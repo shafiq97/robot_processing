@@ -1,0 +1,16 @@
+<launch>
+
+<include file="$(find ule_assembly_description)/launch/controller.launch" />
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ule_assembly_description)/urdf/ule_assembly.xacro'"/>
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model ule_assembly"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+ 
+</launch>
